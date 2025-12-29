@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Courier New", Courier, monospace;
+}
+
+/* Stage */
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(120% 90% at 50% 35%, #ffd1e4 0%, transparent 60%),
+    radial-gradient(80% 70% at 20% 80%, #ffb3d1 0%, transparent 55%),
+    radial-gradient(80% 70% at 80% 80%, #ffb3d1 0%, transparent 55%),
+    linear-gradient(180deg, #f7a9c8 0%, #f19bbf 100%);
+}
+
+/* Soft dreamy haze */
+.haze {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,0.18), transparent 60%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Layers */
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.back { z-index: 2; }
+.text-layer { z-index: 3; }
+.front { z-index: 4; }
+
+/* Center message */
+.message {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255,255,255,0.95);
+  font-size: clamp(12px, 3vw, 16px);
+  letter-spacing: 0.08em;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  user-select: none;
+}
+
+/* Rose emoji */
+.rose {
+  position: absolute;
+  top: -10%;
+  left: var(--x);
+  font-size: var(--size);
+  opacity: var(--op);
+  animation:
+    fall var(--dur) linear var(--delay) infinite,
+    sway var(--swayDur) ease-in-out var(--delay) infinite;
+  will-change: transform;
+}
+
+/* Depth tuning */
+.back .rose {
+  filter: blur(0.6px);
+  opacity: 0.45;
+}
+
+.front .rose {
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.25));
+}
+
+/* Animations */
+@keyframes fall {
+  from { transform: translateY(-20vh); }
+  to   { transform: translateY(140vh); }
+}
+
+@keyframes sway {
+  0%,100% { margin-left: 0; }
+  50%     { margin-left: var(--sway); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rose { animation: none; }
+}
+</style>
+</head>
+
+<body>
+<div class="stage">
+  <div class="haze"></div>
+
+  <div class="layer back" id="backLayer"></div>
+
+  <div class="text-layer">
+    <div class="message">
+      YOU DID A GREAT JOB MY DEAR ROSA :)
+    </div>
+  </div>
+
+  <div class="layer front" id="frontLayer"></div>
+</div>
+
+<script>
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function createRose() {
+  const span = document.createElement("span");
+  span.className = "rose";
+  span.textContent = "🌹";
+
+  span.style.setProperty("--x", rand(-5, 105) + "vw");
+  span.style.setProperty("--size", rand(14, 24) + "px");
+  span.style.setProperty("--op", rand(0.5, 0.9));
+  span.style.setProperty("--dur", rand(16, 32) + "s");
+  span.style.setProperty("--delay", rand(0, 10) + "s");
+  span.style.setProperty("--sway", rand(-18, 18) + "px");
+  span.style.setProperty("--swayDur", rand(5, 9) + "s");
+
+  return span;
+}
+
+function populate(layer, count) {
+  for (let i = 0; i < count; i++) {
+    layer.appendChild(createRose());
+  }
+}
+
+populate(document.getElementById("backLayer"), 18);
+populate(document.getElementById("frontLayer"), 10);
+</script>
+</body>
+</html>
